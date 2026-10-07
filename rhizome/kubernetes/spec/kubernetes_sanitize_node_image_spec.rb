@@ -11,6 +11,13 @@ RSpec.describe KubernetesSanitizeNodeImage do
         set -ueo pipefail
         export DEBIAN_FRONTEND=noninteractive
 
+        running=$(uname -r)
+        versions=$(linux-version list)
+        for version in $versions; do
+          if [ "$version" != "$running" ]; then
+            apt-get purge -y "linux-image-$version"
+          fi
+        done
         apt-get autoremove -y
         apt-get clean
         rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
